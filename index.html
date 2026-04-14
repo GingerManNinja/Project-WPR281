@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bug Tracking System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="container">
+    <header class="dashboard-header">
+      <div>
+        <h1>Bug Tracking System</h1>
+        <p>Issue Dashboard</p>
+      </div>
+    </header>
+
+    <section class="dashboard-card">
+
+      <div class="card-top">
+        <h2>All Issues</h2>
+
+        <div class="top-actions">
+          <span class="issue-count">0 Issues</span>
+          <button id="newIssueBtn" class="create-btn">+ New Issue</button>
+        </div>
+      </div>
+
+      <div class="search-container">
+        <input type="text" id="issueSearch" placeholder="Search issues..." class="search-input">
+      </div>
+
+      <div class="status-summary">
+        <div class="status-box open">
+          <span id="openCount">0</span>
+          <p>Open</p>
+        </div>
+
+        <div class="status-box resolved">
+          <span id="resolvedCount">0</span>
+          <p>Resolved</p>
+        </div>
+
+        <div class="status-box overdue">
+          <span id="overdueCount">0</span>
+          <p>Overdue</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="issue-table">
+          <thead>
+            <tr>
+              <th>Summary</th>
+              <th>Project</th>
+              <th>Assigned To</th>
+              <th>Status</th>
+              <th>Priority</th>
+            </tr>
+          </thead>
+          <tbody id="issueList"></tbody>
+        </table>
+      </div>
+
+      <div class="issue-details" id="issueDetails">
+        <h3>Issue Details</h3>
+        <p>Select an issue to see full details.</p>
+      </div>
+
+    </section>
+
+    <script src="functionality.js"></script>
+
+</body>
+
+</html>
