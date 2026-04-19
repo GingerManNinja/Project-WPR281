@@ -5,7 +5,15 @@ const newIssueBtn = document.getElementById("newIssueBtn");
 const openCount = document.getElementById("openCount");
 const resolvedCount = document.getElementById("resolvedCount");
 const overdueCount = document.getElementById("overdueCount");
+const closeBtn = document.getElementById("closeFormBtn")
+const popupForm = document.getElementById("popupForm")
+const submitBtn = document.getElementById("submitBtn")
+const popupFormTitle = document.getElementById("popupFormTitle")
 
+//Test global variable for update of row item
+let userSelectedRow
+
+// Temporary test data
 const people = [
    {
       id: 1, 
@@ -151,7 +159,6 @@ let issues = JSON.parse(localStorage.getItem("issues")) || [
       resolutionSummary: "Applying responsive CSS overflow-x"
    }
 ];
-
 const searchInput = document.getElementById("issueSearch");
 
 function getStatusClass(status) {
@@ -207,24 +214,48 @@ function showIssueDetails(issue, selectedRow = null) {
    ).join('');
 
    issueDetails.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-         <img src="${avatarUrl}" alt="Avatar" style="width: 50px; height: 50px; border-radius: 50%;">
-         <h3>${issue.summary}</h3>
-      </div>
-      <div class="details-grid">
-         <p><strong>Description:</strong> ${issue.description}</p>
-         <p><strong>Assigned To:</strong> 
-            <select class="form-select" onchange="updateAssignment('${issue.summary}', this.value)">
-               <option value="">Unassigned (Assign Later)</option>
-               ${peopleOptions}
-            </select>
-         </p>
-         <p><strong>Project:</strong> ${issue.project}</p>
-         <p><strong>Status:</strong> ${issue.status}</p>
-         <p><strong>Priority:</strong> ${issue.priority}</p>
-         <p><strong>Reported:</strong> ${issue.dateReported}</p>
-      </div>
-   `;
+        <h3>${issue.summary}</h3>
+        <div class="details-grid">
+            <p><strong>Description:</strong> ${formatDisplayValue(issue.description)}</p>
+            <p><strong>Project:</strong> ${formatDisplayValue(issue.project)}</p>
+            <p><strong>Assigned To:</strong> ${formatDisplayValue(issue.assignedTo)}</p>
+            <p>
+                <strong>Status:</strong>
+                <span class="status ${getStatusClass(issue.status)}">● ${formatDisplayValue(issue.status)}</span>
+            </p>
+            <p>
+                <strong>Priority:</strong>
+                <span class="priority ${getPriorityClass(issue.priority)}">⚡ ${formatDisplayValue(issue.priority)}</span>
+            </p>
+            <p><strong>Date Reported:</strong> ${formatDisplayValue(issue.dateReported)}</p>
+            <p><strong>Target Resolution Date:</strong> ${formatDisplayValue(issue.targetDate)}</p>
+            <p><strong>Actual Resolution Date:</strong> ${formatDisplayValue(issue.actualResolutionDate)}</p>
+            <p><strong>Resolution Summary:</strong> ${formatDisplayValue(issue.resolutionSummary)}</p>
+
+            <button type="button" id="editBtn">Edit</button>
+        </div>
+    `;
+
+      //Open popup for edit
+      const editBtn = document.getElementById("editBtn")
+      editBtn.addEventListener("click", () => {
+      popupForm.style.display = "flex"
+      popupForm.style.flexDirection = "column"
+      popupFormTitle.innerHTML = "Edit Issue:"
+
+      document.getElementById("summary").value = issue.summary
+      document.getElementById("description").value = issue.description
+      document.getElementById("project").value = issue.project
+      document.getElementById("assignedTo").value = issue.assignedTo
+      document.getElementById("status").value = issue.status
+      document.getElementById("priority").value = issue.priority
+      document.getElementById("dateReported").value = issue.dateReported
+      document.getElementById("targetResolutionDate").value = issue.targetDate
+      document.getElementById("actualResolutionDate").value = issue.actualResolutionDate
+      document.getElementById("resolutionSummary").value = issue.resolutionSummary
+      })
+
+      userSelectedRow = issue
 }
 
 function loadIssues(filter = "") {
@@ -299,6 +330,7 @@ function updateStatusSummary(issueArray) {
    overdueCount.textContent = overdue;
 
 }
+
 function updateAssignment(issueSummary, newAssignee) {
    const issueIndex = issues.findIndex(i => i.summary === issueSummary);
    
@@ -309,3 +341,74 @@ function updateAssignment(issueSummary, newAssignee) {
       console.log(`Successfully reassigned to ${newAssignee}`);
    }
 }
+
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------
+
+// Create the Issue/Ticket form
+
+newIssueBtn.addEventListener("click", () => {
+   popupForm.style.display = "block"
+});
+
+closeBtn.addEventListener("click", () => {
+   popupFormTitle.innerHTML = "New Issue:"
+   popupForm.style.display = "none"
+   document.getElementById("summary").value = ""
+   document.getElementById("description").value = ""
+   document.getElementById("project").value = ""
+   document.getElementById("assignedTo").value = ""
+   document.getElementById("status").value = ""
+   document.getElementById("priority").value = ""
+   document.getElementById("dateReported").value = ""
+   document.getElementById("targetResolutionDate").value = ""
+   document.getElementById("actualResolutionDate").value = ""
+   document.getElementById("resolutionSummary").value = ""
+});
+
+
+// Capture all required fields: summary, description, identified by, dates, project, assigned person, status, priority, resolution details
+submitBtn.addEventListener("click", () => {
+   submit(userSelectedRow)
+})
+
+function submit(issue) {
+         if (popupFormTitle.innerHTML == "New Issue:") {
+            issues.push({
+            summary: document.getElementById("summary").value,
+            description: document.getElementById("description").value,
+            project: document.getElementById("project").value,
+            assignedTo: document.getElementById("assignedTo").value,
+            status: document.getElementById("status").value,
+            priority: document.getElementById("priority").value,
+            dateReported: document.getElementById("dateReported").value,
+            targetDate: document.getElementById("targetResolutionDate").value,
+            actualResolutionDate: document.getElementById("actualResolutionDate").value,
+            resolutionSummary: document.getElementById("resolutionSummary").value
+            })
+            popupForm.style.display = "none"
+            loadIssues()
+         }
+         // Implement Edit / Update Issue functionality
+         else if (popupFormTitle.innerHTML == "Edit Issue:") {
+            issue.summary = document.getElementById("summary").value 
+            issue.description = document.getElementById("description").value 
+            issue.project = document.getElementById("project").value 
+            issue.assignedTo = document.getElementById("assignedTo").value 
+            issue.status = document.getElementById("status").value 
+            issue.priority = document.getElementById("priority").value 
+            issue.dateReported = document.getElementById("dateReported").value 
+            issue.targetDate = document.getElementById("targetResolutionDate").value 
+            issue.actualResolutionDate = document.getElementById("actualResolutionDate").value 
+            issue.resolutionSummary = document.getElementById("resolutionSummary").value 
+            popupForm.style.display = "none"
+            loadIssues()
+         }
+         else {
+            alert("Error implementing action. Please try again.")
+         }
+}
+
+// Ensure edited issues update correctly in localStorage
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------
