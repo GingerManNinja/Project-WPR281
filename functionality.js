@@ -6,13 +6,71 @@ const openCount = document.getElementById("openCount");
 const resolvedCount = document.getElementById("resolvedCount");
 const overdueCount = document.getElementById("overdueCount");
 
-// Temporary test data
-const issues = [
+const people = [
+   {
+      id: 1, 
+      name: "Tanya", 
+      surname: "Smith", 
+      email: "tanya@example.com", 
+      username: "tsmith01",
+      profilePic: "https://ui-avatars.com/api/?name=Tanya+Smith&background=random"
+   },
+   {
+      id: 2, 
+      name: "John", 
+      surname: "Doe", 
+      email: "john@example.com", 
+      username: "jdoe99",
+      profilePic: "https://ui-avatars.com/api/?name=John+Doe&background=random"
+   },
+   {
+      id: 3, 
+      name: "Sarah", 
+      surname: "Jones", 
+      email: "sarah@example.com", 
+      username: "sjones88",
+      profilePic: "https://ui-avatars.com/api/?name=Sarah+Jones&background=random"
+   },
+   {
+      id: 4, 
+      name: "Michael", 
+      surname: "Brown", 
+      email: "mbrown@example.com", 
+      username: "mikeb_dev",
+      profilePic: "https://ui-avatars.com/api/?name=Michael+Brown&background=random"
+   },
+   {
+      id: 5, 
+      name: "Emily", 
+      surname: "Davis", 
+      email: "emilyd@example.com", 
+      username: "edavis_qa",
+      profilePic: "https://ui-avatars.com/api/?name=Emily+Davis&background=random"
+   },
+   {
+      id: 6, 
+      name: "Oliver", 
+      surname: "Khan", 
+      email: "okhan@example.com", 
+      username: "okhan_dev",
+      profilePic: "https://ui-avatars.com/api/?name=Oliver+Khan&background=random"
+   },
+   {
+      id: 7, 
+      name: "Naledi", 
+      surname: "Madiba", 
+      email: "nmadiba@example.com", 
+      username: "naledi_m",
+      profilePic: "https://ui-avatars.com/api/?name=Naledi+Madiba&background=random"
+   }
+];
+
+let issues = JSON.parse(localStorage.getItem("issues")) || [
    {
       summary: "Login page error",
       description: "User cannot log in after resetting password.",
       project: "Student Portal",
-      assignedTo: "Tanya",
+      assignedTo: "Tanya", 
       status: "Open",
       priority: "High",
       dateReported: "2026-04-14",
@@ -43,8 +101,57 @@ const issues = [
       targetDate: "2026-04-12",
       actualResolutionDate: "Not resolved yet",
       resolutionSummary: "Still in progress"
+   },
+   {
+      summary: "Broken link in footer",
+      description: "The 'Privacy Policy' link leads to a 404 page.",
+      project: "Bug Tracker",
+      assignedTo: "Emily",
+      status: "Open",
+      priority: "Low",
+      dateReported: "2026-04-11",
+      targetDate: "2026-04-25",
+      actualResolutionDate: "Not resolved yet",
+      resolutionSummary: "Will update URL in next deployment"
+   },
+   {
+      summary: "Database migration failure",
+      description: "Production database failed to migrate to version 2.4.",
+      project: "Admin Panel",
+      assignedTo: "", 
+      status: "Resolved",
+      priority: "High",
+      dateReported: "2026-04-13",
+      targetDate: "2026-04-17",
+      actualResolutionDate: "Not resolved yet",
+      resolutionSummary: "Waiting for Lead Engineer"
+   },
+   {
+      summary: "Auth token expiration error",
+      description: "Similar to login error: Users are logged out prematurely due to token expiry.",
+      project: "Bug Tracker",
+      assignedTo: "Oliver",
+      status: "Open",
+      priority: "High",
+      dateReported: "2026-04-16",
+      targetDate: "2026-04-19",
+      actualResolutionDate: "Not resolved yet",
+      resolutionSummary: "Investigating session timeouts"
+   },
+   {
+      summary: "Table overflow on small screens",
+      description: "Similar to dashboard layout: Issue table expands past the viewport on mobile devices.",
+      project: "Student Portal",
+      assignedTo: "Naledi",
+      status: "Overdue",
+      priority: "Medium",
+      dateReported: "2026-04-06",
+      targetDate: "2026-04-14",
+      actualResolutionDate: "Not resolved yet",
+      resolutionSummary: "Applying responsive CSS overflow-x"
    }
 ];
+
 const searchInput = document.getElementById("issueSearch");
 
 function getStatusClass(status) {
@@ -88,26 +195,36 @@ function showIssueDetails(issue, selectedRow = null) {
       selectedRow.classList.add("selected-row");
    }
 
+   // Find the full person object to get the profile picture
+   const assignedPerson = people.find(p => p.name === issue.assignedTo);
+   const avatarUrl = assignedPerson ? assignedPerson.profilePic : "https://ui-avatars.com/api/?name=U&background=ccc";
+
+   // Generate dropdown options from the people array
+   const peopleOptions = people.map(person => 
+      `<option value="${person.name}" ${issue.assignedTo === person.name ? 'selected' : ''}>
+         ${person.name} ${person.surname} (@${person.username})
+      </option>`
+   ).join('');
+
    issueDetails.innerHTML = `
-        <h3>${issue.summary}</h3>
-        <div class="details-grid">
-            <p><strong>Description:</strong> ${formatDisplayValue(issue.description)}</p>
-            <p><strong>Project:</strong> ${formatDisplayValue(issue.project)}</p>
-            <p><strong>Assigned To:</strong> ${formatDisplayValue(issue.assignedTo)}</p>
-            <p>
-                <strong>Status:</strong>
-                <span class="status ${getStatusClass(issue.status)}">● ${formatDisplayValue(issue.status)}</span>
-            </p>
-            <p>
-                <strong>Priority:</strong>
-                <span class="priority ${getPriorityClass(issue.priority)}">⚡ ${formatDisplayValue(issue.priority)}</span>
-            </p>
-            <p><strong>Date Reported:</strong> ${formatDisplayValue(issue.dateReported)}</p>
-            <p><strong>Target Resolution Date:</strong> ${formatDisplayValue(issue.targetDate)}</p>
-            <p><strong>Actual Resolution Date:</strong> ${formatDisplayValue(issue.actualResolutionDate)}</p>
-            <p><strong>Resolution Summary:</strong> ${formatDisplayValue(issue.resolutionSummary)}</p>
-        </div>
-    `;
+      <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+         <img src="${avatarUrl}" alt="Avatar" style="width: 50px; height: 50px; border-radius: 50%;">
+         <h3>${issue.summary}</h3>
+      </div>
+      <div class="details-grid">
+         <p><strong>Description:</strong> ${issue.description}</p>
+         <p><strong>Assigned To:</strong> 
+            <select class="form-select" onchange="updateAssignment('${issue.summary}', this.value)">
+               <option value="">Unassigned (Assign Later)</option>
+               ${peopleOptions}
+            </select>
+         </p>
+         <p><strong>Project:</strong> ${issue.project}</p>
+         <p><strong>Status:</strong> ${issue.status}</p>
+         <p><strong>Priority:</strong> ${issue.priority}</p>
+         <p><strong>Reported:</strong> ${issue.dateReported}</p>
+      </div>
+   `;
 }
 
 function loadIssues(filter = "") {
@@ -181,4 +298,14 @@ function updateStatusSummary(issueArray) {
    resolvedCount.textContent = resolved;
    overdueCount.textContent = overdue;
 
+}
+function updateAssignment(issueSummary, newAssignee) {
+   const issueIndex = issues.findIndex(i => i.summary === issueSummary);
+   
+   if (issueIndex !== -1) {
+      issues[issueIndex].assignedTo = newAssignee;
+      localStorage.setItem("issues", JSON.stringify(issues));
+      loadIssues();
+      console.log(`Successfully reassigned to ${newAssignee}`);
+   }
 }
