@@ -412,3 +412,86 @@ function submit(issue) {
 // Ensure edited issues update correctly in localStorage
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------
+// Member 3 – Project Management & Data Storage
+
+// Utility Functions
+function saveData(key, data) {
+   localStorage.setItem(key, JSON.stringify(data));
+}
+
+function loadData(key) {
+   const data = localStorage.getItem(key);
+   
+  if (data) {
+   return JSON.parse(data);
+} else {
+   return [];
+}
+}
+
+// Project Functions 
+function createProject(id, name) {
+   return {
+      id: id,
+      projectName: name
+   };
+}
+
+function addProject(name) {
+   let projects = loadData("projects");
+      let newId;
+
+   if (projects.length > 0) {
+      // If there are existing projects, increment the last ID
+      newId = projects[projects.length - 1].id + 1;
+   } else {
+      // If no projects exist yet, start with ID = 1
+      newId = 1;
+   }
+   const project = createProject(newId, name);
+   projects.push(project);
+   saveData("projects", projects);
+   return project;
+}
+
+function getAllProjects() {
+   return loadData("projects");
+}
+
+function getProjectById(id) {
+   let projects = loadData("projects");
+   return projects.find(p => p.id === id);
+}
+
+function deleteProject(id) {
+   let projects = loadData("projects");
+   projects = projects.filter(p => p.id !== id);
+   saveData("projects", projects);
+}
+
+// Integration with Issues
+function linkIssueToProject(issueSummary, projectName) {
+   let issues = loadData("issues");
+   const issueIndex = issues.findIndex(i => i.summary === issueSummary);
+
+   if (issueIndex !== -1) {
+      issues[issueIndex].project = projectName;
+      saveData("issues", issues);
+      console.log(`Issue "${issueSummary}" linked to project "${projectName}"`);
+   } else {
+      console.log("Issue not found.");
+   }
+}
+
+// Initialization
+window.onload = function() {
+   // Ensure localStorage keys exist
+   if (!localStorage.getItem("projects")) saveData("projects", []);
+   if (!localStorage.getItem("issues")) saveData("issues", []);
+   if (!localStorage.getItem("people")) saveData("people", []);
+
+   console.log("Projects:", getAllProjects());
+   console.log("Issues:", loadData("issues"));
+   console.log("People:", loadData("people"));
+};
+//--------------------------------------------------------------------------------------------------------------------------------------------------------
