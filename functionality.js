@@ -486,14 +486,21 @@ function linkIssueToProject(issueSummary, projectName) {
 }
 
 // Initialization
-window.onload = function() {
-   // Ensure localStorage keys exist
-   if (!localStorage.getItem("projects")) saveData("projects", []);
-   if (!localStorage.getItem("issues")) saveData("issues", []);
-   if (!localStorage.getItem("people")) saveData("people", []);
+window.addEventListener("load", () => {
+   if (!localStorage.getItem("projects")) {
+      saveData("projects", []);
+   }
+
+   if (!localStorage.getItem("issues")) {
+      saveData("issues", issues); // using our existing test issues
+   }
+
+   if (!localStorage.getItem("people")) {
+      saveData("people", people);
+   }
 
    console.log("Projects:", getAllProjects());
    console.log("Issues:", loadData("issues"));
    console.log("People:", loadData("people"));
-};
+});
 //--------------------------------------------------------------------------------------------------------------------------------------------------------
