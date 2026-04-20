@@ -10,7 +10,6 @@ const popupForm = document.getElementById("popupForm")
 const submitBtn = document.getElementById("submitBtn")
 const popupFormTitle = document.getElementById("popupFormTitle")
 
-//Test global variable for update of row item
 let userSelectedRow
 
 // Temporary test data
@@ -160,6 +159,14 @@ let issues = JSON.parse(localStorage.getItem("issues")) || [
    }
 ];
 const searchInput = document.getElementById("issueSearch");
+
+const popupFormElement = document.querySelector("#popupForm form");
+
+popupFormElement.addEventListener("submit", (e) => {
+  e.preventDefault();
+  submit(userSelectedRow);
+});
+
 
 function getStatusClass(status) {
    switch (status.toLowerCase()) {
@@ -366,50 +373,74 @@ closeBtn.addEventListener("click", () => {
    document.getElementById("resolutionSummary").value = ""
 });
 
-
-// Capture all required fields: summary, description, identified by, dates, project, assigned person, status, priority, resolution details
-submitBtn.addEventListener("click", () => {
-   submit(userSelectedRow)
-})
-
+// Capture all required fields
 function submit(issue) {
-         if (popupFormTitle.innerHTML == "New Issue:") {
-            issues.push({
-            summary: document.getElementById("summary").value,
-            description: document.getElementById("description").value,
-            project: document.getElementById("project").value,
-            assignedTo: document.getElementById("assignedTo").value,
-            status: document.getElementById("status").value,
-            priority: document.getElementById("priority").value,
-            dateReported: document.getElementById("dateReported").value,
-            targetDate: document.getElementById("targetResolutionDate").value,
-            actualResolutionDate: document.getElementById("actualResolutionDate").value,
-            resolutionSummary: document.getElementById("resolutionSummary").value
-            })
-            popupForm.style.display = "none"
-            loadIssues()
-         }
-         // Implement Edit / Update Issue functionality
-         else if (popupFormTitle.innerHTML == "Edit Issue:") {
-            issue.summary = document.getElementById("summary").value 
-            issue.description = document.getElementById("description").value 
-            issue.project = document.getElementById("project").value 
-            issue.assignedTo = document.getElementById("assignedTo").value 
-            issue.status = document.getElementById("status").value 
-            issue.priority = document.getElementById("priority").value 
-            issue.dateReported = document.getElementById("dateReported").value 
-            issue.targetDate = document.getElementById("targetResolutionDate").value 
-            issue.actualResolutionDate = document.getElementById("actualResolutionDate").value 
-            issue.resolutionSummary = document.getElementById("resolutionSummary").value 
-            popupForm.style.display = "none"
-            loadIssues()
-         }
-         else {
-            alert("Error implementing action. Please try again.")
-         }
-}
+  const mode = popupFormTitle.textContent.trim(); // safer than innerHTML
 
-// Ensure edited issues update correctly in localStorage
+  if (mode === "New Issue:") {
+    const newIssue = {
+      id: Date.now(),
+      summary: document.getElementById("summary").value,
+      description: document.getElementById("description").value,
+      project: document.getElementById("project").value,
+      assignedTo: document.getElementById("assignedTo").value,
+      status: document.getElementById("status").value,
+      priority: document.getElementById("priority").value,
+      dateReported: document.getElementById("dateReported").value,
+      targetDate: document.getElementById("targetResolutionDate").value,
+      actualResolutionDate: document.getElementById("actualResolutionDate").value,
+      resolutionSummary: document.getElementById("resolutionSummary").value
+    };
+
+    issues.push(newIssue);
+    localStorage.setItem("issues", JSON.stringify(issues)); // persist
+    popupForm.style.display = "none";
+    popupFormElement.reset();
+    loadIssues();
+    userSelectedRow = null;
+  }
+  else if (mode === "Edit Issue:") {
+    if (issue && issue.id) {
+      const idx = issues.findIndex(i => i.id === issue.id);
+      if (idx !== -1) {
+        issues[idx] = {
+          ...issues[idx],
+          summary: document.getElementById("summary").value,
+          description: document.getElementById("description").value,
+          project: document.getElementById("project").value,
+          assignedTo: document.getElementById("assignedTo").value,
+          status: document.getElementById("status").value,
+          priority: document.getElementById("priority").value,
+          dateReported: document.getElementById("dateReported").value,
+          targetDate: document.getElementById("targetResolutionDate").value,
+          actualResolutionDate: document.getElementById("actualResolutionDate").value,
+          resolutionSummary: document.getElementById("resolutionSummary").value
+        };
+        localStorage.setItem("issues", JSON.stringify(issues)); // persist
+      }
+    } else {
+      issue.summary = document.getElementById("summary").value;
+      issue.description = document.getElementById("description").value;
+      issue.project = document.getElementById("project").value;
+      issue.assignedTo = document.getElementById("assignedTo").value;
+      issue.status = document.getElementById("status").value;
+      issue.priority = document.getElementById("priority").value;
+      issue.dateReported = document.getElementById("dateReported").value;
+      issue.targetDate = document.getElementById("targetResolutionDate").value;
+      issue.actualResolutionDate = document.getElementById("actualResolutionDate").value;
+      issue.resolutionSummary = document.getElementById("resolutionSummary").value;
+      localStorage.setItem("issues", JSON.stringify(issues)); // persist
+    }
+
+    popupForm.style.display = "none";
+    popupFormElement.reset();
+    loadIssues();
+    userSelectedRow = null;
+  }
+  else {
+    alert("Error implementing action. Please try again.");
+  }
+}
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------
 // !!!!!!!!(still reviewing)!!!!!!!! Project Management & Data Storage
