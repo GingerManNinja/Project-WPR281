@@ -423,8 +423,10 @@ function loadData(key) {
    const data = localStorage.getItem(key);
    
   if (data) {
+      // If data exists in localStorage, parse it back into an object/array
    return JSON.parse(data);
 } else {
+      // If nothing is stored yet, return an empty array
    return [];
 }
 }
