@@ -88,22 +88,36 @@
       <input type="text" id="project" required>
 
       <label for="assignedTo">Assigned To:</label>
-      <input type="text" id="assignedTo" required>
+      <select type="text" id="assignedTo" required>
+        <option value="" disabled selected>Select an option</option>
+        <option value="John Doe">John Doe</option>
+        <option value="Jane Smith">Jane Smith</option>
+      </select>
 
       <label for="status">Status:</label>
-      <input type="text" id="status" required>
+      <select type="text" id="status" required>
+        <option value="" disabled selected>Select an option</option>
+        <option value="Open">Open</option>
+        <option value="Resolved">Resolved</option>
+        <option value="Overdue">Overdue</option>
+      </select>
 
       <label for="priority">Priority:</label>
-      <input type="text" id="priority" required>
+      <select type="text" id="priority" required>
+        <option value="" disabled selected>Select an option</option>
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+      </select>
 
       <label for="dateReported">Date Reported:</label>
-      <input type="text" id="dateReported" required>
+      <input type="date" id="dateReported" required>
 
       <label for="targetResolutionDate">Target Resolution Date:</label>
-      <input type="text" id="targetResolutionDate" required>
+      <input type="date" min="2026-01-01" id="targetResolutionDate" required>
 
       <label for="actualResolutionDate">Actual Resolution Date:</label>
-      <input type="text" id="actualResolutionDate" required>
+      <input type="date" id="actualResolutionDate" required>
 
       <label for="resolutionSummary">Resolution Summary:</label>
       <input type="text" id="resolutionSummary" required>
