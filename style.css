@@ -18,13 +18,13 @@
     --border-light: #d1d5db;
     --border-row: #e5e7eb;
 
-    --shadow-card: 0 4px 18px rgba(0, 0, 0, 0.08);
-    --shadow-row: 0 3px 6px rgba(0, 0, 0, 0.08);
+    --shadow-card: 0 10px 30px rgba(17, 24, 39, 0.08);
+    --shadow-row: 0 6px 14px rgba(0, 0, 0, 0.08);
     --shadow-focus: 0 0 0 3px rgba(37, 99, 235, 0.12);
 
     --radius-sm: 8px;
     --radius-md: 10px;
-    --radius-lg: 14px;
+    --radius-lg: 18px;
     --radius-pill: 999px;
 
     --status-open-bg: #dbeafe;
@@ -56,7 +56,7 @@ body {
 }
 
 .container {
-    max-width: 1100px;
+    max-width: 1150px;
     margin: 0 auto;
 }
 
@@ -80,10 +80,12 @@ body {
     background-color: var(--bg-card);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
+    border: 1px solid rgba(209, 213, 219, 0.65);
 }
 
 .dashboard-card {
     padding: 20px;
+    animation: pageEnter 0.3s ease;
 }
 
 .card-top,
@@ -95,6 +97,7 @@ body {
 .card-top {
     justify-content: space-between;
     margin-bottom: 20px;
+    gap: 16px;
 }
 
 .card-top h2 {
@@ -104,6 +107,8 @@ body {
 
 .top-actions {
     gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .issue-count,
@@ -119,6 +124,15 @@ body {
     background-color: var(--bg-count);
     color: var(--text-soft);
     padding: 8px 14px;
+    white-space: nowrap;
+}
+
+.create-btn,
+#editBtn,
+#submitBtn,
+#closeFormBtn {
+    font-weight: 700;
+    letter-spacing: 0.01em;
 }
 
 .create-btn {
@@ -146,19 +160,92 @@ body {
 .search-input {
     width: 100%;
     display: block;
-    padding: 12px 14px;
-    font-size: 14px;
+    padding: 14px 16px;
+    font-size: 15px;
     color: var(--text-dark);
     background-color: var(--bg-card);
     border: 1px solid var(--border-light);
-    border-radius: var(--radius-md);
+    border-radius: 14px;
     outline: none;
     transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input::placeholder {
+    color: #9ca3af;
 }
 
 .search-input:focus {
     border-color: #2563eb;
     box-shadow: var(--shadow-focus);
+}
+
+.status-summary {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.status-box {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 14px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.status-box::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0));
+    pointer-events: none;
+}
+
+.status-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.status-box span {
+    display: block;
+    font-size: 22px;
+}
+
+.status-box p {
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+.status-box.all {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.status-box.open {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.status-box.resolved {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-box.overdue {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-box.active {
+    outline: none;
+    box-shadow: 0 0 0 3px #111827, 0 8px 20px rgba(17, 24, 39, 0.15);
+    transform: translateY(-2px) scale(1.01);
 }
 
 .table-wrapper {
@@ -168,6 +255,7 @@ body {
 .issue-table {
     width: 100%;
     border-collapse: collapse;
+    background: var(--bg-card);
 }
 
 .issue-table thead {
@@ -175,15 +263,35 @@ body {
     color: var(--text-white);
 }
 
+.issue-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(--bg-table-head);
+}
+
+.issue-table th {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
 .issue-table th,
 .issue-table td {
     padding: 14px 16px;
     text-align: left;
+    vertical-align: middle;
 }
 
+.issue-table th:first-child,
 .issue-table td:first-child {
-    font-weight: 500;
-    color: #1f2937;
+    width: 95px;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.issue-table tbody tr:nth-child(even) {
+    background-color: rgba(243, 244, 246, 0.45);
 }
 
 .issue-table tbody tr {
@@ -208,13 +316,19 @@ body {
 
 .selected-row {
     background-color: var(--bg-row-selected) !important;
+    outline: 2px solid #2563eb;
 }
 
 .status,
 .priority {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     padding: 6px 12px;
-    font-size: 13px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 999px;
+    letter-spacing: 0.01em;
 }
 
 .status-open {
@@ -257,17 +371,30 @@ body {
     margin-top: 25px;
     padding: 20px;
     border: 1px solid var(--border-row);
+    position: relative;
+}
+
+.issue-details::before {
+    content: "";
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 4px;
+    height: 28px;
+    border-radius: 999px;
+    background: #2563eb;
 }
 
 .issue-details h3 {
     margin-bottom: 16px;
     font-size: 22px;
     color: var(--text-dark);
+    padding-left: 14px;
 }
 
 .issue-details p {
-    margin-bottom: 10px;
-    line-height: 1.5;
+    margin-bottom: 12px;
+    line-height: 1.6;
     color: var(--text-soft);
 }
 
@@ -277,110 +404,211 @@ body {
     gap: 10px 24px;
 }
 
+#editBtn {
+    border: none;
+    background-color: var(--bg-table-head);
+    color: var(--text-white);
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    width: fit-content;
+}
+
+#editBtn:hover {
+    background-color: #1f2937;
+    transform: translateY(-1px);
+}
+
+#editBtn:active {
+    transform: translateY(0);
+}
+
+.newIssueForm-container {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+}
+
+.newIssueForm-container form {
+    background: white;
+    padding: 28px;
+    border-radius: 18px;
+    width: min(760px, 95%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 18px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(209, 213, 219, 0.7);
+    animation: popIn 0.22s ease;
+}
+
+.newIssueForm-container h2 {
+    grid-column: span 2;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+.newIssueForm-container label {
+    margin-bottom: -4px;
+    color: #4b5563;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.newIssueForm-container input,
+.newIssueForm-container select,
+.newIssueForm-container button {
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 8px;
+}
+
+.newIssueForm-container input,
+.newIssueForm-container select {
+    border: 1px solid var(--border-light);
+    outline: none;
+    width: 100%;
+    background: #f9fafb;
+}
+
+.newIssueForm-container input:focus,
+.newIssueForm-container select:focus {
+    border-color: #2563eb;
+    box-shadow: var(--shadow-focus);
+}
+
+#submitBtn,
+#closeFormBtn {
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+#submitBtn {
+    background-color: var(--bg-table-head);
+    color: var(--text-white);
+}
+
+#submitBtn:hover {
+    background-color: #1f2937;
+    transform: translateY(-1px);
+}
+
+#closeFormBtn {
+    background-color: #e5e7eb;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+#closeFormBtn:hover {
+    background-color: #d1d5db;
+    transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes pageEnter {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 900px) {
+    .card-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .top-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .status-summary {
+        flex-wrap: wrap;
+    }
+
+    .status-box {
+        flex: 1 1 calc(50% - 8px);
+    }
+}
+
 @media (max-width: 768px) {
+    body {
+        padding: 18px;
+    }
+
     .details-grid {
         grid-template-columns: 1fr;
     }
 
-    .top-actions {
+    .newIssueForm-container form {
+        grid-template-columns: 1fr;
+    }
+
+    .newIssueForm-container h2 {
+        grid-column: span 1;
+    }
+
+    .status-summary {
         flex-direction: column;
-        align-items: flex-end;
+    }
+
+    .status-box {
+        flex: 1 1 100%;
     }
 }
 
-.status-summary {
+#deleteBtn {
+    border: none;
+    background-color: #b91c1c;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+#deleteBtn:hover {
+    background-color: #991b1b;
+}
+
+.details-actions {
     display: flex;
-    gap: 16px;
-    margin-bottom: 20px;
-}
-
-.status-box {
-    flex: 1;
-    padding: 14px;
-    border-radius: 10px;
-    text-align: center;
-    font-weight: bold;
-}
-
-.status-box span {
-    display: block;
-    font-size: 22px;
-}
-
-.status-box p {
-    font-size: 13px;
-    margin-top: 4px;
-}
-
-.status-box.open {
-    background: #dbeafe;
-    color: #1d4ed8;
-}
-
-.status-box.resolved {
-    background: #dcfce7;
-    color: #15803d;
-}
-
-.status-box.overdue {
-    background: #fee2e2;
-    color: #b91c1c;
-}
-
-.status-box {
-    flex: 1;
-    padding: 10px 14px;
-    border-radius: 10px;
-    text-align: center;
-    font-weight: bold;
-}
-
-.selected-row {
-    background-color: #eaf2ff !important;
-}
-
-.issue-details p {
-    margin-bottom: 12px;
-    line-height: 1.6;
-    color: var(--text-soft);
-}
-
-
-
-
-
-
-
-
-.newIssueForm-container {
-  display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  border: 2px solid #333;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
-  z-index: 1000;
-}
-
-.newIssueForm-container form {
-  display: grid;
-  grid-template-columns: 1fr 2fr; /* two equal columns */
-  gap: 15px;
-}
-
-.newIssueForm-container h2 {
-   grid-column: span 2;
-}
-
-.newIssueForm-container label {
-    margin-bottom: 5px;
-    grid-column: span 1;
-}
-
-.newIssueForm-container input, button {
-    padding: 8px;
-    font-size: 14px;
+    gap: 10px;
+    margin-top: 10px;
 }

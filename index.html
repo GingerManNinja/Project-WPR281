@@ -6,9 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bug Tracking System</title>
   <link rel="stylesheet" href="style.css">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 
 <body>
@@ -28,6 +27,7 @@
 
         <div class="top-actions">
           <span class="issue-count">0 Issues</span>
+          <button id="sortPriorityBtn" class="create-btn">Sort by Priority</button>
           <button id="newIssueBtn" class="create-btn">+ New Issue</button>
         </div>
       </div>
@@ -37,17 +37,22 @@
       </div>
 
       <div class="status-summary">
-        <div class="status-box open">
+        <div class="status-box all" id="allFilter">
+          <span>All</span>
+          <p>Show All</p>
+        </div>
+
+        <div class="status-box open" id="openFilter">
           <span id="openCount">0</span>
           <p>Open</p>
         </div>
 
-        <div class="status-box resolved">
+        <div class="status-box resolved" id="resolvedFilter">
           <span id="resolvedCount">0</span>
           <p>Resolved</p>
         </div>
 
-        <div class="status-box overdue">
+        <div class="status-box overdue" id="overdueFilter">
           <span id="overdueCount">0</span>
           <p>Overdue</p>
         </div>
@@ -57,6 +62,7 @@
         <table class="issue-table">
           <thead>
             <tr>
+              <th>ID</th>
               <th>Summary</th>
               <th>Project</th>
               <th>Assigned To</th>
@@ -75,63 +81,69 @@
 
     </section>
 
-  <div id="popupForm" class="newIssueForm-container">
-    <form>
-      <h2 id="popupFormTitle">New Issue:</h2>
-      <label for="summary">Summary:</label>
-      <input type="text" id="summary" required>
+    <div id="popupForm" class="newIssueForm-container">
+      <form>
+        <h2 id="popupFormTitle">New Issue:</h2>
 
-      <label for="description">Description:</label>
-      <input type="text" id="description" required>
+        <label for="summary">Summary:</label>
+        <input type="text" id="summary" required>
 
-      <label for="project">Project:</label>
-      <input type="text" id="project" required>
+        <label for="description">Description:</label>
+        <input type="text" id="description" required>
 
-      <label for="assignedTo">Assigned To:</label>
-      <select type="text" id="assignedTo" required>
-        <option value="" disabled selected>Select an option</option>
-        <option value="John Doe">John Doe</option>
-        <option value="Jane Smith">Jane Smith</option>
-      </select>
+        <label for="project">Project:</label>
+        <input type="text" id="project" required>
 
-      <label for="status">Status:</label>
-      <select type="text" id="status" required>
-        <option value="" disabled selected>Select an option</option>
-        <option value="Open">Open</option>
-        <option value="Resolved">Resolved</option>
-        <option value="Overdue">Overdue</option>
-      </select>
+        <label for="assignedTo">Assigned To:</label>
+        <select id="assignedTo" required>
+          <option value="" disabled selected>Select an option</option>
+          <option value="Tanya">Tanya</option>
+          <option value="John">John</option>
+          <option value="Sarah">Sarah</option>
+          <option value="Michael">Michael</option>
+          <option value="Emily">Emily</option>
+          <option value="Oliver">Oliver</option>
+          <option value="Naledi">Naledi</option>
+        </select>
 
-      <label for="priority">Priority:</label>
-      <select type="text" id="priority" required>
-        <option value="" disabled selected>Select an option</option>
-        <option value="Low">Low</option>
-        <option value="Medium">Medium</option>
-        <option value="High">High</option>
-      </select>
+        <label for="status">Status:</label>
+        <select id="status" required>
+          <option value="" disabled selected>Select an option</option>
+          <option value="Open">Open</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Overdue">Overdue</option>
+        </select>
 
-      <label for="dateReported">Date Reported:</label>
-      <input type="date" id="dateReported" required>
+        <label for="priority">Priority:</label>
+        <select id="priority" required>
+          <option value="" disabled selected>Select an option</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
 
-      <label for="targetResolutionDate">Target Resolution Date:</label>
-      <input type="date" min="2026-01-01" id="targetResolutionDate" required>
+        <label for="dateReported">Date Reported:</label>
+        <input type="date" id="dateReported" required>
 
-      <label for="actualResolutionDate">Actual Resolution Date:</label>
-      <input type="date" id="actualResolutionDate" required>
+        <label for="targetResolutionDate">Target Resolution Date:</label>
+        <input type="date" min="2026-01-01" id="targetResolutionDate" required>
 
-      <label for="resolutionSummary">Resolution Summary:</label>
-      <input type="text" id="resolutionSummary" required>
+        <label for="actualResolutionDate">Actual Resolution Date:</label>
+        <input type="date" id="actualResolutionDate">
 
-      <button type="submit" id="submitBtn">Submit</button>
-      <button type="button" id="closeFormBtn">Close</button>
-    </form>
-  </div>
+        <label for="resolutionSummary">Resolution Summary:</label>
+        <input type="text" id="resolutionSummary" required>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <button type="submit" id="submitBtn">Submit</button>
+        <button type="button" id="closeFormBtn">Close</button>
+      </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"></script>
     <script src="functionality.js"></script>
-
+  </div>
 </body>
 
 </html>
