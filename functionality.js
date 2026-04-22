@@ -457,12 +457,17 @@ function loadIssues(filter = "") {
       return;
    }
 
-   filteredIssues.forEach(issue => {
+  filteredIssues.forEach(issue => {
       issueList.appendChild(createIssueRow(issue));
    });
 
-   issueCount.textContent = `${filteredIssues.length} Issues`;
    updateStatusSummary(filteredIssues);
+
+   if (filter) {
+      issueCount.innerHTML = `${filteredIssues.length} matches for "<em>${filter}</em>"`;
+   } else {
+      issueCount.textContent = `${filteredIssues.length} Issues`;
+   }
 }
 
 function loadIssuesByStatus(status) {
@@ -637,6 +642,9 @@ newIssueBtn.addEventListener("click", () => {
    popupFormTitle.textContent = "New Issue:";
    popupFormElement.reset();
    userSelectedRow = null;
+   const todayStr = new Date().toISOString().split('T')[0];
+   document.getElementById("dateReported").value = todayStr; // Default to today
+   document.getElementById("targetResolutionDate").setAttribute("min", todayStr);
 });
 
 closeBtn.addEventListener("click", closePopup);
